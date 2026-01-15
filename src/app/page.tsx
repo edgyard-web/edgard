@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useInitData } from '@telegram-apps/sdk-react';  // основной хук для данных пользователя
+import { useInitData } from '@tma.js/sdk-react';// основной хук для данных пользователя
 
 export default function Home() {
   const initData = useInitData();  // получает user, chatType и т.д. от Telegram
