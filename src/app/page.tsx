@@ -1,63 +1,45 @@
 'use client';
 
-import { Section, Cell, Image, List } from '@telegram-apps/telegram-ui';
-import { useTranslations } from 'next-intl';
-
-import { Link } from '@/components/Link/Link';
-import { LocaleSwitcher } from '@/components/LocaleSwitcher/LocaleSwitcher';
-import { Page } from '@/components/Page';
-
-import tonSvg from './_assets/ton.svg';
+import { useState } from 'react';
+import { useInitData } from '@telegram-apps/sdk-react';  // или @telegram-apps/sdk, в зависимости от версии в шаблоне
+import { Button, Input } from '@telegram-apps/telegram-ui';  // если в шаблоне есть UI-компоненты Telegram
 
 export default function Home() {
-  const t = useTranslations('i18n');
+  const initData = useInitData();  // твои данные из Telegram
+  const [videoUrl, setVideoUrl] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleAddVideo = () => {
+    if (!videoUrl.includes('youtube.com') && !videoUrl.includes('youtu.be')) {
+      setMessage('Это не похоже на YouTube-ссылку 😔');
+      return;
+    }
+
+    // Здесь позже добавим отправку на backend
+    // Пока просто симуляция
+    setMessage(`Видео добавлено! Ссылка: ${videoUrl}`);
+    setVideoUrl('');  // очистка поля
+  };
 
   return (
-    <Page back={false}>
-      <List>
-        <Section
-          header="Features"
-          footer="You can use these pages to learn more about features, provided by Telegram Mini Apps and other useful projects"
-        >
-          <Link href="/ton-connect">
-            <Cell
-              before={
-                <Image
-                  src={tonSvg.src}
-                  style={{ backgroundColor: '#007AFF' }}
-                  alt="TON Logo"
-                />
-              }
-              subtitle="Connect your TON wallet"
-            >
-              TON Connect
-            </Cell>
-          </Link>
-        </Section>
-        <Section
-          header="Application Launch Data"
-          footer="These pages help developer to learn more about current launch information"
-        >
-          <Link href="/init-data">
-            <Cell subtitle="User data, chat information, technical data">
-              Init Data
-            </Cell>
-          </Link>
-          <Link href="/launch-params">
-            <Cell subtitle="Platform identifier, Mini Apps version, etc.">
-              Launch Parameters
-            </Cell>
-          </Link>
-          <Link href="/theme-params">
-            <Cell subtitle="Telegram application palette information">
-              Theme Parameters
-            </Cell>
-          </Link>
-        </Section>
-        <Section header={t('header')} footer={t('footer')}>
-          <LocaleSwitcher />
-        </Section>
-      </List>
-    </Page>
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <h1>Привет, {initData?.user?.firstName || 'Эдгар'}! 👻</h1>
+      <p>Это твой Uwiew-клон для обмена просмотрами хоррор-видео</p>
+
+      <h2>Добавь своё видео</h2>
+      <Input
+        placeholder="Вставь ссылку на YouTube (https://youtube.com/watch?v=...)"
+        value={videoUrl}
+        onChange={(e) => setVideoUrl(e.target.value)}
+        style={{ marginBottom: '10px', width: '100%' }}
+      />
+      <Button onClick={handleAddVideo} size="l" stretched>
+        Добавить видео
+      </Button>
+
+      {message && <p style={{ marginTop: '20px', color: message.includes('добавлено') ? 'green' : 'red' }}>{message}</p>}
+
+      <p style={{ marginTop: '30px' }}>Баланс баллов: 0 (скоро подключим!)</p>
+    </div>
   );
 }
